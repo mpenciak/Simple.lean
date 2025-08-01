@@ -6,6 +6,7 @@ inductive Tp
   | bool
   | fn (argTps : List Tp) (outTp : Tp)
   | list (tp : Tp)
+  | struct (structRef :
 
 inductive Term
   | var (name : String)

@@ -7,3 +7,4 @@ package "simple" where
 @[default_target]
 lean_lib Simple where
 
+require "fgdorais" / "Parser"
