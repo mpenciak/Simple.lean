@@ -1,3 +1,5 @@
+//! Here we define the Lexer
+
 use logos::{Lexer, Logos};
 
 #[derive(Logos, Debug, PartialEq, Clone)]
@@ -6,7 +8,7 @@ pub enum Token {
     // Literals
     #[regex(r"0x[0-9a-fA-F]+", LiteralNumber::parse_hex)]
     #[regex(r"0b[01]+", LiteralNumber::parse_bin)]
-    #[regex(r"[0-9]+", LiteralNumber::parse_dec)]
+    #[regex(r"[1-9][0-9]*", LiteralNumber::parse_dec)]
     Number(LiteralNumber),
 
     #[regex(r"[0-9]+\.[0-9]+([eE][+-]?[0-9]+)?", LiteralFloat::parse_float)]
@@ -28,9 +30,7 @@ pub enum Token {
     // Strings
     #[regex(r#""(?:[^"]|\\")*""#, |lex| {
         let s = lex.slice();
-        // Remove the surrounding quotes
         let content = &s[1..s.len() - 1];
-        // Handle escape sequences
         let unescaped = content.replace(r#"\""#, "\"");
         Some(String::from(unescaped))
     })]
