@@ -6,6 +6,7 @@ This file will be where I keep my syntax definitions
 * Integers: decimal `0`, hex `0xabc`, binary `0b10011`
 * Floats: decimal `3.14`, scientific`1e-9`
 * Chars: `'a'`
+* String: `"Hello, world!"`
 * Booleans: `true`, `false`
 * Unit: `()`
 
