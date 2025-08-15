@@ -109,12 +109,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56e6fa9c48d24d85fb3de5ad847117517440f6beceb7798af16b4a87d616b8d0"
 
 [[package]]
-name = "simple"
+name = "simple-lang"
 version = "0.1.0"
 dependencies = [
  "logos",
  "nom",
 ]
+
+[[package]]
+name = "simple-vm"
+version = "0.1.0"
 
 [[package]]
 name = "syn"
