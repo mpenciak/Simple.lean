@@ -1,9 +1,14 @@
 //! Here we define the Lexer
 
+use std::iter::{Cloned, Enumerate};
+use std::slice::Iter;
+
 use logos::{Lexer, Logos};
+use nom::Input;
 
 #[derive(Logos, Debug, PartialEq, Clone)]
 #[logos(skip r"\s+")]
+#[logos(skip r"//[^\n]*\n?")]
 pub enum Token {
     // Literals
     #[regex(r"0x[0-9a-fA-F]+", LiteralNumber::parse_hex)]
@@ -62,9 +67,10 @@ pub enum Token {
     #[regex(r"[a-zA-Z_][a-zA-Z0-9_]*", |lex| lex.slice().to_string())]
     Identifier(String),
 
-    // Comment
-    #[regex(r"//[^\n]*\n?", |lex| lex.slice().to_string())]
-    LineComment(String),
+    // NOTE: currently we filter out comments at the lexer level
+    // // Comment
+    // #[regex(r"//[^\n]*\n?", |lex| lex.slice().to_string())]
+    // LineComment(String),
 
     // Unary Operators
     #[regex(r"-|!", UnaryOperator::parse, priority = 3)]
@@ -290,6 +296,67 @@ impl ComparisonOperator {
     }
 }
 
+#[derive(Clone)]
+pub(crate) struct Tokens<'a> {
+    data: &'a [Token],
+}
+
+impl<'a> Input for Tokens<'a> {
+    type Item = Token;
+    type Iter = Cloned<Iter<'a, Token>>;
+    type IterIndices = Enumerate<Self::Iter>;
+
+    fn input_len(&self) -> usize {
+        self.data.len()
+    }
+
+    fn take(&self, index: usize) -> Self {
+        Tokens {
+            data: &self.data[..index],
+        }
+    }
+
+    fn take_from(&self, index: usize) -> Self {
+        Tokens {
+            data: &self.data[index..],
+        }
+    }
+
+    fn take_split(&self, index: usize) -> (Self, Self) {
+        (
+            Tokens {
+                data: &self.data[..index],
+            },
+            Tokens {
+                data: &self.data[index..],
+            },
+        )
+    }
+
+    fn position<P>(&self, predicate: P) -> Option<usize>
+    where
+        P: Fn(Self::Item) -> bool,
+    {
+        self.data.iter().position(|item| predicate(item.clone()))
+    }
+
+    fn iter_elements(&self) -> Self::Iter {
+        self.data.iter().cloned()
+    }
+
+    fn iter_indices(&self) -> Self::IterIndices {
+        self.data.iter().cloned().enumerate()
+    }
+
+    fn slice_index(&self, count: usize) -> Result<usize, nom::Needed> {
+        if count <= self.data.len() {
+            Ok(count)
+        } else {
+            Err(nom::Needed::Unknown)
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -311,44 +378,3 @@ mod tests {
         );
     }
 }
-
-// pub struct Lexer<'a> {
-//     inner: logos::Lexer<'a, Token>,
-// }
-//
-// impl<'a> Lexer<'a> {
-//     pub fn new(input: &'a str) -> Self {
-//         Self {
-//             inner: Token::lexer(input),
-//         }
-//     }
-//
-//     pub fn next_token(&mut self) -> Option<Result<Token, LexError>> {
-//         self.inner.next().map(|result| {
-//             result.map_err(|_| LexError::InvalidToken {
-//                 span: self.inner.span(),
-//             })
-//         })
-//     }
-//
-//     pub fn span(&self) -> std::ops::Range<usize> {
-//         self.inner.span()
-//     }
-// }
-//
-// #[derive(Debug, Clone, PartialEq)]
-// pub enum LexError {
-//     InvalidToken { span: std::ops::Range<usize> },
-// }
-//
-// impl std::fmt::Display for LexError {
-//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//         match self {
-//             LexError::InvalidToken { span } => {
-//                 write!(f, "Invalid token at position {}..{}", span.start, span.end)
-//             }
-//         }
-//     }
-// }
-//
-// impl std::error::Error for LexError {}
