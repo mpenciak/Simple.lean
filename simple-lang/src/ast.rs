@@ -143,10 +143,14 @@ pub enum Expr {
     Block(Block),
     If(IfExpr),
     Loop(LoopExpr),
-    Break,
-    Continue,
-    Return(Option<Box<Expr>>),
-    Assignment(Identifier, Box<Expr>),
+}
+
+#[derive(Debug, Clone)]
+pub enum LValue {
+    Identifier(Identifier),
+    MemberAccess(Box<LValue>, Identifier),
+    TupleAccess(Box<LValue>, usize),
+    ListAccess(Box<LValue>, usize),
 }
 
 #[derive(Debug, Clone)]
@@ -161,7 +165,22 @@ pub struct Block {
 }
 
 #[derive(Debug, Clone)]
-pub enum Statement {} // TODO: Figure out what statements can be
+pub enum Statement {
+    Break,
+    Continue,
+    Return(Option<Box<Expr>>),
+    Assignment(LValue, Box<Expr>),
+    Expr(Box<Expr>),
+    Let(LetStatement),
+}
+
+#[derive(Debug, Clone)]
+pub struct LetStatement {
+    pub name: Identifier,
+    pub mutable: bool,
+    pub type_expr: Option<TypeExpr>,
+    pub value: Box<Expr>,
+}
 
 // Control flow
 #[derive(Debug, Clone)]
