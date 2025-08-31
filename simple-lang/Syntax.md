@@ -14,7 +14,7 @@ This file will be where I keep my syntax definitions
 * Anonymous function `|<args1> : <type1>, <arg2>: <type2>, ...| { ... }`
 
 ## Type aliases
-* `type <name> = <type>`
+* `type <name> = <type>;`
 
 ## Expressions
 * Parentheses do nothing but group `(<expr>)`
@@ -59,6 +59,9 @@ This file will be where I keep my syntax definitions
 * Member access `<name>.<field>`
 * Impl declaration `impl <structname> { <methods> }`
 * Impl calling `<struct>.<method>(...)`
+
+## Globals
+* Declaration `global <name> : <type> = <expr>`
 
 ## Unary operators
 

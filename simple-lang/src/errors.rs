@@ -13,13 +13,21 @@ pub mod parser {
 
     #[derive(Debug, PartialEq, Eq, Clone)]
     pub enum Error<I> {
-        Nom { kind: ErrorKind, at: I },
-        ExpectedKeyword { expected: Keyword, found: Keyword },
-        Tag { at: I },
+        Nom {
+            kind: ErrorKind,
+            at: I,
+        },
+        ExpectedKeyword {
+            expected: Vec<Keyword>,
+            found: Keyword,
+        },
+        Tag {
+            at: I,
+        },
     }
 
     impl<I> Error<I> {
-        pub fn expected_keyword(expected: Keyword, found: Keyword) -> Self {
+        pub fn expected_keyword(expected: Vec<Keyword>, found: Keyword) -> Self {
             Self::ExpectedKeyword { expected, found }
         }
 

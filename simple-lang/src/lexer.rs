@@ -58,7 +58,7 @@ pub enum Token {
         r"(?x)
         type|mut|const|for|in|while|continue|break|if|
         let|elif|else|def|return|struct|impl|import|
-        open|close|namespace",
+        open|close|namespace|global",
         Keyword::parse
     )]
     Keyword(Keyword),
@@ -130,7 +130,7 @@ impl LiteralFloat {
     }
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Delimiter {
     LeftParen,
     RightParen,
@@ -200,6 +200,7 @@ pub enum Keyword {
     Open,
     Close,
     Namespace,
+    Global,
 }
 
 impl Keyword {
@@ -225,6 +226,7 @@ impl Keyword {
             "open" => Some(Keyword::Open),
             "close" => Some(Keyword::Close),
             "namespace" => Some(Keyword::Namespace),
+            "global" => Some(Keyword::Global),
             _ => None,
         }
     }

@@ -1,5 +1,7 @@
 //! Here we define the core language AST
 
+use crate::lexer::Identifier;
+
 // Top-level statements and declarations
 #[derive(Debug, Clone)]
 pub enum TopLevel {
@@ -12,18 +14,18 @@ pub enum TopLevel {
 // Import and namespace management
 #[derive(Debug, Clone)]
 pub struct ImportStatement {
-    pub file: String,
+    pub file: Identifier,
 }
 
 #[derive(Debug, Clone)]
 pub enum NamespaceModifier {
-    Open(String),
-    Close(String),
+    Open(Identifier),
+    Close(Identifier),
 }
 
 #[derive(Debug, Clone)]
 pub struct NamespaceDecl {
-    pub name: String,
+    pub name: Identifier,
     pub body: Vec<TopLevel>,
 }
 
@@ -39,45 +41,45 @@ pub enum Definition {
 
 #[derive(Debug, Clone)]
 pub struct FunctionDef {
-    pub name: String,
+    pub name: Identifier,
     pub params: Vec<Parameter>,
-    pub return_type: Option<TypeExpr>,
+    pub return_type: TypeExpr,
     pub body: Block,
 }
 
 #[derive(Debug, Clone)]
 pub struct Parameter {
-    pub name: String,
+    pub name: Identifier,
     pub type_expr: TypeExpr,
 }
 
 #[derive(Debug, Clone)]
 pub struct TypeAlias {
-    pub name: String,
+    pub name: Identifier,
     pub type_expr: TypeExpr,
 }
 
 #[derive(Debug, Clone)]
 pub struct StructDef {
-    pub name: String,
+    pub name: Identifier,
     pub fields: Vec<FieldDef>,
 }
 
 #[derive(Debug, Clone)]
 pub struct FieldDef {
-    pub name: String,
+    pub name: Identifier,
     pub type_expr: TypeExpr,
 }
 
 #[derive(Debug, Clone)]
 pub struct ImplBlock {
-    pub struct_name: String,
+    pub struct_name: Identifier,
     pub methods: Vec<FunctionDef>,
 }
 
 #[derive(Debug, Clone)]
 pub struct GlobalDef {
-    pub name: String,
+    pub name: Identifier,
     pub type_expr: TypeExpr,
     pub value: Expr,
 }
@@ -107,8 +109,8 @@ pub enum TypeExpr {
     List(Box<TypeExpr>),
     Tuple(Vec<TypeExpr>),
     HashMap(Box<TypeExpr>, Box<TypeExpr>),
-    Alias(String),
-    Struct(String),
+    Alias(Identifier),
+    Struct(Identifier),
 }
 
 // Literals
@@ -126,14 +128,14 @@ pub enum Literal {
 #[derive(Debug, Clone)]
 pub enum Expr {
     Literal(Literal),
-    Identifier(String),
+    Identifier(Identifier),
     Lambda(LambdaExpr),
     Tuple(Vec<Expr>),
     List(Vec<Expr>),
     Map(Vec<(Expr, Expr)>),
-    MemberAccess(Box<Expr>, String),
+    MemberAccess(Box<Expr>, Identifier),
     FunctionCall(Box<Expr>, Vec<Expr>),
-    MethodCall(Box<Expr>, String, Vec<Expr>),
+    MethodCall(Box<Expr>, Identifier, Vec<Expr>),
     UnaryOp(UnaryOperator, Box<Expr>),
     BinaryOp(BinaryOperator, Box<Expr>, Box<Expr>),
     Comparison(Comparison, Box<Expr>, Box<Expr>),
@@ -144,7 +146,7 @@ pub enum Expr {
     Break,
     Continue,
     Return(Option<Box<Expr>>),
-    Assignment(String, Box<Expr>),
+    Assignment(Identifier, Box<Expr>),
 }
 
 #[derive(Debug, Clone)]
@@ -156,14 +158,10 @@ pub struct LambdaExpr {
 #[derive(Debug, Clone)]
 pub struct Block {
     pub statements: Vec<Statement>,
-    pub expr: Option<Box<Expr>>, // final expression (optional)
 }
 
 #[derive(Debug, Clone)]
-pub enum Statement {
-    Expression(Expr),
-    Definition(Definition),
-}
+pub enum Statement {} // TODO: Figure out what statements can be
 
 // Control flow
 #[derive(Debug, Clone)]
@@ -181,7 +179,7 @@ pub enum LoopExpr {
         body: Block,
     },
     For {
-        var: String,
+        var: Identifier,
         iterable: Box<Expr>,
         body: Block,
     },
