@@ -150,7 +150,8 @@ pub enum LValue {
     Identifier(Identifier),
     MemberAccess(Box<LValue>, Identifier),
     TupleAccess(Box<LValue>, usize),
-    ListAccess(Box<LValue>, usize),
+    ListAccess(Box<LValue>, Expr),
+    MapAccess(Box<LValue>, Expr),
 }
 
 #[derive(Debug, Clone)]
