@@ -1,6 +1,6 @@
 //! Here we define the core language AST
 
-use crate::lexer::Identifier;
+use crate::lexer::{CoreType, Identifier};
 
 // Top-level statements and declarations
 #[derive(Debug, Clone)]
@@ -84,24 +84,6 @@ pub struct GlobalDef {
     pub value: Expr,
 }
 
-// Type system
-#[derive(Debug, Clone)]
-pub enum CoreType {
-    U8,
-    U16,
-    U32,
-    U64,
-    I8,
-    I16,
-    I32,
-    I64,
-    Fp,
-    Bool,
-    Str,
-    Char,
-    Unit,
-}
-
 #[derive(Debug, Clone)]
 pub enum TypeExpr {
     Core(CoreType),
@@ -109,8 +91,7 @@ pub enum TypeExpr {
     List(Box<TypeExpr>),
     Tuple(Vec<TypeExpr>),
     HashMap(Box<TypeExpr>, Box<TypeExpr>),
-    Alias(Identifier),
-    Struct(Identifier),
+    NamedType(Identifier),
 }
 
 // Literals

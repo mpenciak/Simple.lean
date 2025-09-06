@@ -58,10 +58,18 @@ pub enum Token {
         r"(?x)
         type|mut|const|for|in|while|continue|break|if|
         let|elif|else|def|return|struct|impl|import|
-        open|close|namespace|global",
+        open|close|namespace|global|fun|List|Tuple|Map",
         Keyword::parse
     )]
     Keyword(Keyword),
+
+    #[regex(
+        r"(?x)
+        u8|u16|u32|u64|i8|i16|i32|i64|Float|Bool|String|Char|Unit
+        ",
+        CoreType::parse
+    )]
+    TypeWord(CoreType),
 
     // Identifiers
     #[regex(r"[a-zA-Z_][a-zA-Z0-9_]*", |lex| lex.slice().to_string())]
@@ -201,6 +209,10 @@ pub enum Keyword {
     Close,
     Namespace,
     Global,
+    Fun,
+    List,
+    Map,
+    Tuple,
 }
 
 impl Keyword {
@@ -227,6 +239,41 @@ impl Keyword {
             "close" => Some(Keyword::Close),
             "namespace" => Some(Keyword::Namespace),
             "global" => Some(Keyword::Global),
+            "fun" => Some(Keyword::Fun),
+            "List" => Some(Keyword::List),
+            "Tuple" => Some(Keyword::Tuple),
+            "Map" => Some(Keyword::Map),
+            _ => None,
+        }
+    }
+}
+
+// Type system
+#[derive(Debug, PartialEq, Clone)]
+pub enum CoreType {
+    U8,
+    U16,
+    U32,
+    U64,
+    I8,
+    I16,
+    I32,
+    I64,
+    Fp,
+    Bool,
+    Str,
+    Char,
+    Unit,
+}
+
+impl CoreType {
+    fn parse(lex: &mut Lexer<Token>) -> Option<Self> {
+        match lex.slice() {
+            "u8" => Some(Self::U8),
+            "u16" => Some(Self::U16),
+            "u32" => Some(Self::U32),
+            "u64" => Some(Self::U64),
+            // TODO: Finish this when I'm back on the internet for autocomplete
             _ => None,
         }
     }
