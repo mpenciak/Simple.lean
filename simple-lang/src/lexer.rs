@@ -273,7 +273,15 @@ impl CoreType {
             "u16" => Some(Self::U16),
             "u32" => Some(Self::U32),
             "u64" => Some(Self::U64),
-            // TODO: Finish this when I'm back on the internet for autocomplete
+            "i8" => Some(Self::I8),
+            "i16" => Some(Self::I16),
+            "i32" => Some(Self::I32),
+            "i64" => Some(Self::I64),
+            "Float" => Some(Self::Fp),
+            "Bool" => Some(Self::Bool),
+            "String" => Some(Self::Str),
+            "Char" => Some(Self::Char),
+            "Unit" => Some(Self::Unit),
             _ => None,
         }
     }
